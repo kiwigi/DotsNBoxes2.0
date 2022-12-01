@@ -5,9 +5,6 @@ import { useState } from "react";
 
 
 
-
-
-
 const charStyle ={
     display: "flex",
     flexDirection: "row",
@@ -57,28 +54,26 @@ export default function PlayerCard(props) {
         padding: '10px'
     }
 
-    if (wasCharSelected){
-        cardStyle={
-            margin: "10px",
-            backgroundColor: props.color,
-            width: '80%',
-            maxWidth: '400px',
-            height: '200px',
-            borderRadius: '40px',
-            justifyContent: 'center',
-            padding: '10px',
-            filter: 'grayscale(50%)'
-        }
-    }
-    const imgStyle = {
-        width: '10vh',
-        height: '10vh',
+    let imgStyle = {
+        width: '15vw',
+        maxWidth: '90px',
+        height: '15vw',
+        maxHeight: '90px',
         border: '0.5px solid #B5B5B5',
         borderRadius: '80%',
         margin: '12px',
         backgroundColor: 'white', //figure out how to make it change colour  (only one of them)
         cursor: 'pointer'
     }
+
+    if (wasCharSelected){
+        
+        cardStyle['filter'] = 'grayscale(50%)'
+        cardStyle['cursor'] = 'not-allowed'  
+        imgStyle['cursor'] = 'not-allowed'
+
+    }
+   
 
 
 
@@ -98,3 +93,13 @@ export default function PlayerCard(props) {
         </>
     )
 }
+
+// const Penis = styled.div`
+//     width: 10vh;
+//     height: 10vh;
+//     border: 0.5px solid #B5B5B5;
+//     borderRadius: 80%;
+//     margin: 12px;
+//     backgroundColor: white;
+//     cursor: pointer;
+// `
