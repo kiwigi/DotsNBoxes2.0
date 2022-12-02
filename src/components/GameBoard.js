@@ -5,49 +5,162 @@ import unicorn from '../assets/neigh.png'
 import styled from 'styled-components';
 
 
+const getCookieValue = (name) => (
+    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+)
+
+
 
 function getNextTurn(currPlayer){
     let nextPlayer = 0
-    if(currPlayer===3){
-        nextPlayer=1
+    if(currPlayer===2){
+        nextPlayer=0
     
     }else{
-        nextPlayer ++
+        nextPlayer = currPlayer + 1
     }
-return nextPlayer
+    return nextPlayer
 }
 
-let currentTurn = 1
 
-export default function GameBoard(){
+
+
+export default function GameBoard(props){
+
+    const [gameState, updateState] = useState(props.gameState)
+
+    function updateBoard(index){
+        let newGameState = {
+            ...gameState
+        }
+        let newBoard = gameState.BoardState
+        newBoard[index] = gameState.CurrentTurn
+        newGameState.BoardState = newBoard
+        updateState(newGameState)
+    }
+
+    function updateTurn(){
+        let newGameState2 = {
+            ...gameState
+        }
+        const nextTurn = getNextTurn(gameState.CurrentTurn)
+        newGameState2.CurrentTurn=nextTurn
+        updateState(newGameState2)
+    }
+
+
+    // const [lineColor, selectLine] = useState("white")
+    function updateLine(index) {
+        let newGameState = {
+            ...gameState
+        }
+        const playerColor = gameState.Players[gameState.CurrentTurn].Color
+        
+        newGameState.LineColors[index] = playerColor
+        
+    }
+
+    function checkIfSquare(indecies){
+        const possibleSquares = [
+            [0,1,2,3],[3,4,5,6],[6,7,8,9],[10,2,11,12],[12,5,13,14],[14,8,15,16],[17,11,18,19],[19,13,20,21],[21,15,22,23]
+        ]
+        const left = gameState.BoardState[indecies[0]]
+        const top = gameState.BoardState[indecies[1]]
+        const bottom = gameState.BoardState[indecies[2]]
+        const right = gameState.BoardState[indecies[3]]
+
+        if(left && right && bottom && top >-1){
+            return true
+        }else{
+            return false
+        }
+    }
+
+    const adjList = [
+        [0,1,2,3,4,5,6,7,8,9],
+        [10,2,11,12,5,13,14,8,15,16],
+        [17,11,18,19,13,20,21,15,22,23]
+    ]
+
+
+
+    function setCookie(){
+        document.cookie = "CurrentTurn =" + gameState.CurrentTurn
+        document.cookie = "Players =" + JSON.stringify(gameState.Players)
+        document.cookie = "Player1 =" + JSON.stringify(gameState.Player1)
+        document.cookie = "Player2 =" + JSON.stringify(gameState.Player1)
+        document.cookie = "Player3 =" + JSON.stringify(gameState.Player1)
+        document.cookie = "BoardState ="+ gameState.BoardState
+        document.cookie = "LineColors ="+ gameState.LineColors
+    }
+
+    function handleClick(index){
+        updateBoard(index)
+        updateLine(index)
+        updateTurn()
+        
+    }
+    setCookie()
+
+
+    //LINES
+    const HLine = styled.div`
+    width: 85%;
+    height: 15%;
+    border: 3px solid white;
+    border-radius: 25px;
+    cursor: pointer;
+    position: absolute;
+    background-color: ${ props=> props.color };
+    left: 0.8vw;
+    `
+    const BHLine = styled(HLine)`
+    bottom: -2vh;
+    `
+    const THLine = styled(HLine)`
+    top: -1.5vh;
+    `
+    // background-color: ${};
+
+    const VLine = styled.div`
+    width: 15%;
+    height: 80%;
+    // border: 3px solid #FFCEE6;
+    border-radius: 25px;
+    cursor: pointer;
+    position: absolute;
+    background-color: ${ props=> props.color };
+    top: 12%;
+    `
+
+    const RVLine = styled(VLine)`
+    right: -1vw;
+    `
+
+    const LVLine = styled(VLine)`
+    left: -0.5vw;
+    `
+
     return(
         <>
+        <p style={{textAlign: "center"}}>Player {gameState.CurrentTurn+1}'s Turn</p>
         <Wrapper>
             <Row>
-                <Square> <TopLeftDot/> <TopRightInnerDot/> <BottomLeftDot/> <BottomRightInnerDot/> <LVLine/> <THLine/> <BHLine/> </Square>
-                <Square> <TopRightInnerDot/> <BottomRightInnerDot/> <LVLine/>  <THLine/> <BHLine/>  </Square>
-                <Square> <TopRightInnerDot/> <BottomRightInnerDot/> <LVLine/> <THLine/> <BHLine/>  </Square>
-                <Square> <TopRightDot/> <BottomRightDot/> <LVLine/> <RVLine/> <THLine/> <BHLine/>  </Square>
+                <Square> <TopLeftDot/> <TopRightDot/> <BottomLeftDot/> <BottomRightDot/> <LVLine onClick={() => handleClick(0)} color = {gameState.LineColors[0]}/> <THLine onClick={() => handleClick(1)} color = {gameState.LineColors[1]}/> <BHLine onClick={() => handleClick(2)} color = {gameState.LineColors[2]}/> </Square>
+                <Square> <TopRightDot/> <BottomRightDot/> <LVLine onClick={() => handleClick(3)} color = {gameState.LineColors[3]}/>  <THLine onClick={() => handleClick(4)} color = {gameState.LineColors[4]}/> <BHLine onClick={() => handleClick(5)} color = {gameState.LineColors[5]}/>  </Square>
+                <Square> <TopRightDot/> <BottomRightDot/> <LVLine onClick={() => handleClick(6)} color = {gameState.LineColors[6]}/> <THLine onClick={() => handleClick(7)} color = {gameState.LineColors[7]}/> <BHLine onClick={() => handleClick(8)} color = {gameState.LineColors[8]}/> <RVLine onClick={() => handleClick(9)} color = {gameState.LineColors[9]}/> </Square>
             </Row>
             <Row>
-                <Square>  <BottomLeftDot/> <BottomRightInnerDot/> <LVLine/>  <BHLine/> </Square>
-                <Square>  <BottomRightInnerDot/> <LVLine/>   <BHLine/>  </Square>
-                <Square>  <BottomRightInnerDot/> <LVLine/> <BHLine/>  </Square>
-                <Square>  <BottomRightDot/> <LVLine/> <RVLine/>  <BHLine/>  </Square>
+                <Square>  <BottomLeftDot/> <BottomRightDot/> <LVLine onClick={() => handleClick(10)} color = {gameState.LineColors[10]}/> <BHLine onClick={() => handleClick(11)} color = {gameState.LineColors[11]}/> </Square>
+                <Square>  <BottomRightDot/> <LVLine onClick={() => handleClick(12)} color = {gameState.LineColors[12]}/>   <BHLine onClick={() => handleClick(13)} color = {gameState.LineColors[13]}/>  </Square>
+                <Square>  <BottomRightDot/> <LVLine onClick={() => handleClick(14)} color = {gameState.LineColors[14]}/>  <BHLine onClick={() => handleClick(15)} color = {gameState.LineColors[15]}/> <RVLine onClick={() => handleClick(16)} color = {gameState.LineColors[16]}/> </Square>
             </Row>
             <Row>
-                <Square>  <BottomLeftDot/> <BottomRightInnerDot/> <LVLine/>  <BHLine/> </Square>
-                <Square>  <BottomRightInnerDot/> <LVLine/>   <BHLine/>  </Square>
-                <Square>  <BottomRightInnerDot/> <LVLine/> <BHLine/>  </Square>
-                <Square>  <BottomRightDot/> <LVLine/> <RVLine/>  <BHLine/>  </Square>
+                <Square>  <BottomLeftDot/> <BottomRightDot/> <LVLine onClick={() => handleClick(17)} color = {gameState.LineColors[17]}/>   <BHLine onClick={() => handleClick(18)} color = {gameState.LineColors[18]}/> </Square>
+                <Square>  <BottomRightDot/> <LVLine onClick={() => handleClick(19)} color = {gameState.LineColors[19]}/>   <BHLine onClick={() => handleClick(20)} color = {gameState.LineColors[20]}/>  </Square>
+                <Square>  <BottomRightDot/> <LVLine onClick={() => handleClick(21)} color = {gameState.LineColors[21]}/>  <BHLine onClick={() => handleClick(22)} color = {gameState.LineColors[22]}/> <RVLine onClick={() => handleClick(23)} color = {gameState.LineColors[23]}/> </Square>
             </Row>
 
-            <Row>
-                <Square>  <BottomLeftDot/> <BottomRightInnerDot/> <LVLine/>  <BHLine/> </Square>
-                <Square>  <BottomRightInnerDot/> <LVLine/>   <BHLine/>  </Square>
-                <Square>  <BottomRightInnerDot/> <LVLine/> <BHLine/>  </Square>
-                <Square>  <BottomRightDot/> <LVLine/> <RVLine/>  <BHLine/>  </Square>
-            </Row>
         </Wrapper>
         
         
@@ -58,7 +171,7 @@ export default function GameBoard(){
 //DOTS
 const Dot = styled.div`
     background-color: #707070;
-    width: 5vw;
+    width: 3vw;
     max-width: 20px;
     max-height: 20px;
     aspect-ratio: 1;
@@ -68,15 +181,11 @@ const Dot = styled.div`
 
 `
 const TopRightDot = styled(Dot)`
-    right: -0.5vw;
-    top: -0.5vw;
-
-`
-const TopRightInnerDot = styled(Dot)`
     right: -1vw;
     top: -0.5vw;
 
 `
+
 const TopLeftDot = styled(Dot)`
     left: -0.5vw;
     top: -0.5vw;  
@@ -87,50 +196,14 @@ const BottomLeftDot = styled(Dot)`
 `
 const BottomRightDot = styled(Dot)`
     bottom: -1vw;
-    right: -0.5vw;
-`
-const BottomRightInnerDot = styled(Dot)`
-    bottom: -1vw;
     right: -1vw;
-`
-
-//LINES
-const HLine = styled.div`
-    width: 100%;
-    height: 1vw;
-    border: 3px solid #FFCEE6;
-    border-radius: 25px;
-    cursor: pointer;
-    position: absolute;
-`
-const BHLine = styled(HLine)`
-    bottom: -1vw;
-`
-const THLine = styled(HLine)`
-    top: -0.5vw;
-`
-
-const VLine = styled.div`
-    width: 10%;
-    height: 100%;
-    border: 3px solid #FFCEE6;
-    border-radius: 25px;
-    cursor: pointer;
-    position: absolute;
-
-    `
-const RVLine = styled(VLine)`
-    right: -0.5vw;
-`
-const LVLine = styled(VLine)`
-    left: -0.5vw;
 `
 
 //WRAPPER
 const Wrapper = styled.div`
     width: 90vw;
     aspect-ratio: 1;
-    max-width: 650px;
+    max-width: 550px;
     border: 3px solid #FFCEE6;
     border-radius: 50px;
     margin-left: auto;

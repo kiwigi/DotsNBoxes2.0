@@ -3,9 +3,7 @@ import dog from '../assets/woof.png'
 import unicorn from '../assets/neigh.png'
 import { useState } from "react";
 import GameBoard from '../components/GameBoard';
-document.cookie = "PlayerNumber1 Score= 0" 
-document.cookie = "PlayerNumber2 Score= 0" 
-document.cookie = "PlayerNumber3 Score= 0" 
+
 
 
 const playerColors = ['#E6F8FF','#D9FFCE','#F7D8FF']
@@ -72,47 +70,103 @@ function getPlayerChar(playerNum){
 
 
 const playerChars = [getPlayerChar("1"),getPlayerChar("2"),getPlayerChar("3")]
-
+let lineIDs = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+let lineColors = ["white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white",]
 
 export default function Game(){
 
+    const [gameState, updateGameState] = useState({
+        CurrentTurn: 0,
+        Players: [
+            {
+                Color: playerColors[0],
+                Character: playerChars[0],
+                Score: 0
+            },
+            {
+                Color: playerColors[1],
+                Character: playerChars[1],
+                Score: 0,
+            },
+           {
+                Color: playerColors[2],
+                Character: playerChars[2],
+                Score: 0
+            }
+        ],
+        Player1: {
+            Color: playerColors[0],
+            Character: playerChars[0],
+            Score: 0
+        },
+        Player2: {
+            Color: playerColors[1],
+            Character: playerChars[1],
+            Score: 0,
+        },
+        Player3: {
+            Color: playerColors[2],
+            Character: playerChars[2],
+            Score: 0
+        },
+        BoardState: lineIDs,
+        LineColors: lineColors,
+
+    })
+    // gameState['CurrentPlayer'] = gameState.Player1
+    // console.log(gameState)
+   
     //To update scores on the DOM
     //TODO MAKE IT ADD THE SCORE NOT JUST SWITCH TO 1!
     //Or figure out if you can use cookies??
-    const [p1Score,updateP1Score] = useState(0)
-    function refreshP1Score() {
-        updateP1Score(parseInt(getCookieValue("PlayerNumber1 Score")))
+   
+    function updateP1Score() {
+        let newGameState = {
+            ...gameState
+        }
+        newGameState.Player1.Score = newGameState.Player1.Score+1
+        updateGameState(newGameState)
+        console.log(gameState)
+    }
+    function updateP2Score() {
+        let newGameState = {
+            ...gameState
+        }
+        newGameState.Player2.Score = newGameState.Player2.Score+1
+        updateGameState(newGameState)
+        console.log(gameState)
+    }
+    function updateP3Score() {
+        let newGameState = {
+            ...gameState
+        }
+        newGameState.Player2.Score = newGameState.Player2.Score+1
+        updateGameState(newGameState)
+        console.log(gameState)
     }
 
-    const [p2Score,updateP2Score] = useState(0)
-    function refreshP2Score() {
-        updateP2Score(parseInt(getCookieValue("PlayerNumber2 Score")))
-    }
-    const [p3Score,updateP3Score] = useState(0)
-    function refreshP3Score() {
-        updateP3Score(parseInt(getCookieValue("PlayerNumber3 Score")))
-    }
 
 
     return(
         <>
+       <p onClick={updateP1Score}> p1 score inc</p>
             <div style={{fontSize: '5vh',textAlign: 'center'}}>Dots• & Boxes☐</div>
             <div style={scoreBoard}>
                 <div style={indivPScore}>
-                    <img style={player1Icon} src={playerChars[0]} alt="Player 1 Icon"></img>
-                    <p style={playerScore}>{p1Score}</p>
+                    <img style={player1Icon} src={gameState.Player1.Character} alt="Player 1 Icon"></img>
+                    <p style={playerScore}>{gameState.Player1.Score}</p>
                 </div>
                 <div style={indivPScore}>
-                    <img style={player2Icon} src={playerChars[1]} alt="Player 2 Icon"></img>
-                    <p style={playerScore}>{p2Score}</p>
+                    <img style={player2Icon} src={gameState.Player2.Character} alt="Player 2 Icon"></img>
+                    <p style={playerScore}>{gameState.Player2.Score}</p>
                 </div>
                 <div style={indivPScore}>
-                    <img style={player3Icon} src={playerChars[2]} alt="Player 3 Icon"></img>
-                    <p style={playerScore}>{p3Score}</p>
+                    <img style={player3Icon} src={gameState.Player3.Character} alt="Player 3 Icon"></img>
+                    <p style={playerScore}>{gameState.Player3.Score}</p>
                 </div>
             </div>
 
-            <GameBoard />
+            <GameBoard gameState={gameState}/>
 
 
         </>
