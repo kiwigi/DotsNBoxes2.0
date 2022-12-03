@@ -1,8 +1,11 @@
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import cat from '../assets/meow.png'
 import dog from '../assets/woof.png'
 import unicorn from '../assets/neigh.png'
 import styled from 'styled-components';
+import {SocketContext} from '../context/socket';
+
+
 
 
 const getCookieValue = (name) => (
@@ -27,7 +30,14 @@ function getNextTurn(currPlayer){
 
 export default function GameBoard(props){
 
+    const socket = useContext(SocketContext)
+
     const [gameState, updateState] = useState(props.gameState)
+    
+    const sendGameState = () => {
+        socket.emit("send_gameState",gameState)
+    }
+
 
     function updateBoard(index){
         let newGameState = {
@@ -82,23 +92,29 @@ export default function GameBoard(props){
         [17,11,18,19,13,20,21,15,22,23]
     ]
 
-
+    //bc socket is used in dependency list, whenever event is emitted, this function will run
+    useEffect( () => {
+        socket.on("recieve_gameState", (data) => {
+            updateState(data);
+        })
+    }, [socket]);
 
     function setCookie(){
         document.cookie = "CurrentTurn =" + gameState.CurrentTurn
         document.cookie = "Players =" + JSON.stringify(gameState.Players)
         document.cookie = "Player1 =" + JSON.stringify(gameState.Player1)
-        document.cookie = "Player2 =" + JSON.stringify(gameState.Player1)
-        document.cookie = "Player3 =" + JSON.stringify(gameState.Player1)
+        document.cookie = "Player2 =" + JSON.stringify(gameState.Player2)
+        document.cookie = "Player3 =" + JSON.stringify(gameState.Player3)
         document.cookie = "BoardState ="+ gameState.BoardState
         document.cookie = "LineColors ="+ gameState.LineColors
     }
+
 
     function handleClick(index){
         updateBoard(index)
         updateLine(index)
         updateTurn()
-        
+        sendGameState()
     }
     setCookie()
 

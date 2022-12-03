@@ -3,6 +3,10 @@ import dog from '../assets/woof.png'
 import unicorn from '../assets/neigh.png'
 import { useState } from "react";
 import GameBoard from '../components/GameBoard';
+import io from 'socket.io-client';
+import { useContext } from "react";
+import {SocketContext, socket} from '../context/socket';
+
 
 
 
@@ -68,6 +72,13 @@ function getPlayerChar(playerNum){
     }
 }
 
+   function toArr(string){
+        let arr = string.split(",")
+        console.log(arr)
+        return arr
+    }
+
+
 
 const playerChars = [getPlayerChar("1"),getPlayerChar("2"),getPlayerChar("3")]
 let lineIDs = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
@@ -75,50 +86,69 @@ let lineColors = ["white","white","white","white","white","white","white","white
 
 export default function Game(){
 
-    const [gameState, updateGameState] = useState({
-        CurrentTurn: 0,
-        Players: [
-            {
+    let gameStateObj = {}
+
+ 
+
+    if(getCookieValue("Players") !== ""){
+            gameStateObj = {
+            CurrentTurn: parseInt(getCookieValue("CurrentTurn")),
+            Players: JSON.parse(getCookieValue("Players")),
+            Player1: JSON.parse(getCookieValue("Player1")),
+            Player2: JSON.parse(getCookieValue("Player2")),
+            Player3: JSON.parse(getCookieValue("Player3")),
+            BoardState: toArr(getCookieValue("BoardState")),
+            LineColors: toArr(getCookieValue("LineColors"))
+        }
+    }else{
+        gameStateObj = {
+        
+            CurrentTurn: 0,
+            Players: [
+                {
+                    Color: playerColors[0],
+                    Character: playerChars[0],
+                    Score: 0
+                },
+                {
+                    Color: playerColors[1],
+                    Character: playerChars[1],
+                    Score: 0,
+                },
+               {
+                    Color: playerColors[2],
+                    Character: playerChars[2],
+                    Score: 0
+                }
+            ],
+            Player1: {
                 Color: playerColors[0],
                 Character: playerChars[0],
                 Score: 0
             },
-            {
+            Player2: {
                 Color: playerColors[1],
                 Character: playerChars[1],
                 Score: 0,
             },
-           {
+            Player3: {
                 Color: playerColors[2],
                 Character: playerChars[2],
                 Score: 0
-            }
-        ],
-        Player1: {
-            Color: playerColors[0],
-            Character: playerChars[0],
-            Score: 0
-        },
-        Player2: {
-            Color: playerColors[1],
-            Character: playerChars[1],
-            Score: 0,
-        },
-        Player3: {
-            Color: playerColors[2],
-            Character: playerChars[2],
-            Score: 0
-        },
-        BoardState: lineIDs,
-        LineColors: lineColors,
+            },
+            BoardState: lineIDs,
+            LineColors: lineColors,
+    
+        }
+ 
+    }
 
-    })
-    // gameState['CurrentPlayer'] = gameState.Player1
-    // console.log(gameState)
-   
-    //To update scores on the DOM
-    //TODO MAKE IT ADD THE SCORE NOT JUST SWITCH TO 1!
-    //Or figure out if you can use cookies??
+    const sendData = () => {
+        socket.emit("send_data",{cat: "meow"})
+    }
+
+    const [gameState, updateGameState] = useState(gameStateObj)
+
    
     function updateP1Score() {
         let newGameState = {
@@ -149,7 +179,7 @@ export default function Game(){
 
     return(
         <>
-       <p onClick={updateP1Score}> p1 score inc</p>
+       <p onClick={sendData}> send data</p>
             <div style={{fontSize: '5vh',textAlign: 'center'}}>Dots• & Boxes☐</div>
             <div style={scoreBoard}>
                 <div style={indivPScore}>
@@ -165,8 +195,9 @@ export default function Game(){
                     <p style={playerScore}>{gameState.Player3.Score}</p>
                 </div>
             </div>
-
-            <GameBoard gameState={gameState}/>
+            <SocketContext.Provider value={socket}>
+                <GameBoard gameState={gameState}/>
+            </SocketContext.Provider>
 
 
         </>
