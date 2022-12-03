@@ -1,7 +1,7 @@
 import cat from '../assets/meow.png'
 import dog from '../assets/woof.png'
 import unicorn from '../assets/neigh.png'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GameBoard from '../components/GameBoard';
 import io from 'socket.io-client';
 import { useContext } from "react";
@@ -143,12 +143,17 @@ export default function Game(){
  
     }
 
-    const sendData = () => {
-        socket.emit("send_data",{cat: "meow"})
-    }
+   
 
     const [gameState, updateGameState] = useState(gameStateObj)
 
+    const pp = useContext(SocketContext)
+
+    useEffect( () => {
+        socket.on("recieve_gameState", (data) => {
+            updateGameState(data);
+        })
+    }, [pp]);
    
     function updateP1Score() {
         let newGameState = {
@@ -179,7 +184,6 @@ export default function Game(){
 
     return(
         <>
-       <p onClick={sendData}> send data</p>
             <div style={{fontSize: '5vh',textAlign: 'center'}}>Dots• & Boxes☐</div>
             <div style={scoreBoard}>
                 <div style={indivPScore}>

@@ -1,7 +1,7 @@
 import cat from '../assets/meow.png'
 import dog from '../assets/woof.png'
 import unicorn from '../assets/neigh.png'
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 
 
@@ -16,29 +16,25 @@ const charStyle ={
 export default function PlayerCard(props) {
 
 
-    // const [charSelected, updateState] = useState('white') //
-
-    // function highlightSelected() {
-    //     if (charSelected==='#FFCEE6'){
-    //         updateState('white')
-
-    //     }
-    //     else {
-    //         updateState('#FFCEE6')
-    //     }
-    // }
+    const inputRef = useRef(null)
+    const [playerName, updateName] = useState('')
 
     const [wasCharSelected, updateState] = useState(false)//
 
     function setAsSelected() {
         updateState(true)
     }
+    
 
 
-    function setPlayer(playerNum,playerCharacter,color){
+    function setPlayer(playerNum,playerCharacter,playerName){
         if(!wasCharSelected){
+            updateName(inputRef.current.value)
             document.cookie = "PlayerNumber"+playerNum+" Character="+playerCharacter 
+            document.cookie = "PlayerNumber"+playerNum+" Name="+playerName
+
             setAsSelected()
+
         }
 
     }
@@ -66,6 +62,24 @@ export default function PlayerCard(props) {
         cursor: 'pointer'
     }
 
+    let inputStyle = {
+
+        fontSize: '2.6vh',
+        textAlign: 'center',
+        justifyContent: 'center',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        display: 'block',
+        border: 'none',
+        color: '#707070',
+        borderRadius: "5px",
+        backgroundColor: props.color,
+        marginTop: '3vh',
+        marginBottom: '3vh'
+        
+
+    }
+
     if (wasCharSelected){
         
         cardStyle['filter'] = 'grayscale(50%)'
@@ -75,18 +89,18 @@ export default function PlayerCard(props) {
     }
    
 
-
+    
 
  
 
     return(
         <>
         <div style={cardStyle}>
-        <p style={{fontSize: "2.5vh", textAlign:"center"}}>PLAYER {props.num}</p>
+            <input style={inputStyle} ref= {inputRef} placeholder="ENTER NAME"></input>
         <div style={charStyle}>
-            <img onClick={ ()=> setPlayer(props.num,"dog",props.color) } style={imgStyle} src={dog} alt="dog"></img>
-            <img onClick={ ()=> setPlayer(props.num,"unicorn",props.color) }style={imgStyle} src={unicorn} alt="unicorn"></img>
-            <img onClick={ ()=> setPlayer(props.num,"cat",props.color) }style={imgStyle} src={cat} alt="cat"></img>
+            <img onClick={ ()=> setPlayer(props.num,"dog",inputRef.current.value)} style={imgStyle} src={dog} alt="dog"></img>
+            <img onClick={ ()=> setPlayer(props.num,"unicorn",inputRef.current.value) }style={imgStyle} src={unicorn} alt="unicorn"></img>
+            <img onClick={ ()=> setPlayer(props.num,"cat",inputRef.current.value) }style={imgStyle} src={cat} alt="cat"></img>
         </div>
 
         </div>

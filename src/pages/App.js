@@ -40,7 +40,7 @@ export default function App() {
         <div style={gameTitle}>Dots•</div>
         <div style={gameTitle}> & Boxes☐ </div>  
       </div>
-      <div style={{fontSize: "4vh",color: "#707070", textAlign: 'center'}}>Welcome! Please select a your characters. </div>
+      <div style={{fontSize: "4vh",color: "#707070", textAlign: 'center'}}>Welcome! Please select your characters. </div>
 
       <div style={cardsS}>
         <PlayerCard color="#E6F8FF" num='1'></PlayerCard>

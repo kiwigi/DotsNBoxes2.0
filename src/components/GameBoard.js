@@ -159,7 +159,7 @@ export default function GameBoard(props){
 
     return(
         <>
-        <p style={{textAlign: "center"}}>Player {gameState.CurrentTurn+1}'s Turn</p>
+        <p style={{textAlign: "center"}}>Player {gameState.CurrentTurn}'s Turn</p>
         <Wrapper>
             <Row>
                 <Square> <TopLeftDot/> <TopRightDot/> <BottomLeftDot/> <BottomRightDot/> <LVLine onClick={() => handleClick(0)} color = {gameState.LineColors[0]}/> <THLine onClick={() => handleClick(1)} color = {gameState.LineColors[1]}/> <BHLine onClick={() => handleClick(2)} color = {gameState.LineColors[2]}/> </Square>
