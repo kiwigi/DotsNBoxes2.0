@@ -37,7 +37,7 @@ const btnStyle = {
 }
 
 
-export default function App() {
+export default function Lobby() {
 
   const pp = useContext(SocketContext)
   const [wasPlayerSelected, updatePlayerSelect] = useState([false,false,false])

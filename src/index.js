@@ -1,7 +1,8 @@
 import React from 'react';
 import './index.css';
-import App from './pages/App';
+import Lobby from './pages/Lobby';
 import Game from './pages/Game';
+import Home from './pages/Home';
 import { render } from "react-dom";
 import {
   BrowserRouter,
@@ -15,8 +16,9 @@ const rootElement = document.getElementById('root');
 render(
   <BrowserRouter>
     <Routes>
-        <Route path='/' element={<App/>}/>
+        <Route path='/' element={<Home/>}/>
         <Route path='Game' element={<Game/>}/>
+        <Route path='Lobby' element={<Lobby/>}/>
     </Routes>
   </BrowserRouter>,
   rootElement

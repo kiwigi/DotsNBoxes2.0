@@ -34,8 +34,11 @@ export default function GameBoard(props){
 
     const [gameState, updateState] = useState(props.gameState)
     
+    let room = getCookieValue("Room")
+    console.log(room)
+
     const sendGameState = () => {
-        socket.emit("send_gameState",gameState)
+        socket.emit("send_gameState",gameState, room)
     }
 
 

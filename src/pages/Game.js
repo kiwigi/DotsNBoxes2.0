@@ -57,6 +57,10 @@ const getCookieValue = (name) => (
     document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
 )
 
+
+const room = getCookieValue("Room")
+
+
 function getPlayerChar(playerNum){
     const pChar = getCookieValue("PlayerNumber"+playerNum+" Character")
     

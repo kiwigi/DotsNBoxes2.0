@@ -64,7 +64,7 @@ const sendPlayerData = () => {
         backgroundColor: props.color,
         width: '80%',
         maxWidth: '400px',
-        height: '200px',
+        height: '30vh',
         borderRadius: '40px',
         justifyContent: 'center',
         padding: '10px'
