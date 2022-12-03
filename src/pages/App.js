@@ -2,6 +2,9 @@ import cat from '../assets/meow.png';
 import '../App.css';
 import PlayerCard from '../components/PlayerCard';
 import { Link } from "react-router-dom";
+import { SocketContext, socket} from '../context/socket';
+import { useEffect, useContext, useState } from 'react';
+
 
 const gameTitle = {
   fontSize: "6vh",
@@ -33,7 +36,28 @@ const btnStyle = {
   
 }
 
+
 export default function App() {
+
+  const pp = useContext(SocketContext)
+  const [wasPlayerSelected, updatePlayerSelect] = useState([false,false,false])
+
+
+  useEffect( () => {
+    socket.on("recieve_player", (data) => {
+      
+      let index = data.PlayerNumber-1
+      const oldArr = wasPlayerSelected
+      let newArr = [...oldArr]
+      newArr[index]=true
+      updatePlayerSelect(newArr)
+    })
+}, [pp,wasPlayerSelected]);
+
+
+
+  console.log(wasPlayerSelected)
+
   return (
     <>
       <div style={{justifyContent: "center",textAlign:'center'}}> 
@@ -42,11 +66,13 @@ export default function App() {
       </div>
       <div style={{fontSize: "4vh",color: "#707070", textAlign: 'center'}}>Welcome! Please select your characters. </div>
 
+      <SocketContext.Provider value={socket}>
       <div style={cardsS}>
-        <PlayerCard color="#E6F8FF" num='1'></PlayerCard>
-        <PlayerCard color="#D9FFCE" num='2'></PlayerCard>
-        <PlayerCard color="#F7D8FF" num='3'></PlayerCard>
+        <PlayerCard color="#E6F8FF" num='1' wasSelected={wasPlayerSelected[0]}></PlayerCard>
+        <PlayerCard color="#D9FFCE" num='2' wasSelected={wasPlayerSelected[1]} ></PlayerCard>
+        <PlayerCard color="#F7D8FF" num='3' wasSelected={wasPlayerSelected[2]}></PlayerCard>
       </div>
+      </SocketContext.Provider>
       <div style={btnStyle}>
         <Link to="/game" style={{ textDecoration: 'none',color: '#707070'}}>START</Link> 
       </div>

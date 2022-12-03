@@ -1,7 +1,8 @@
 import cat from '../assets/meow.png'
 import dog from '../assets/woof.png'
 import unicorn from '../assets/neigh.png'
-import { useRef, useState } from "react";
+import { useEffect,useRef, useState,useContext } from "react";
+import {SocketContext} from '../context/socket';
 
 
 
@@ -13,26 +14,45 @@ const charStyle ={
     flexWrap: 'wrap' 
 }
 
+
+
 export default function PlayerCard(props) {
 
+    const socket = useContext(SocketContext)
 
     const inputRef = useRef(null)
-    const [playerName, updateName] = useState('')
 
     const [wasCharSelected, updateState] = useState(false)//
 
+    
     function setAsSelected() {
         updateState(true)
     }
-    
+
+
+let playerData = {}
+
+const sendPlayerData = () => {
+    socket.emit("send_player",playerData)
+}
+
+    useEffect( () => {
+        if(props.wasSelected){
+            updateState(true)
+        }
+    },[props.wasSelected])
 
 
     function setPlayer(playerNum,playerCharacter,playerName){
         if(!wasCharSelected){
-            updateName(inputRef.current.value)
             document.cookie = "PlayerNumber"+playerNum+" Character="+playerCharacter 
             document.cookie = "PlayerNumber"+playerNum+" Name="+playerName
-
+            playerData = {
+                PlayerNumber: playerNum,
+                Name: playerName,
+                Character: playerCharacter,
+            }
+            sendPlayerData()
             setAsSelected()
 
         }
